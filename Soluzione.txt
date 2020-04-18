@@ -1,0 +1,77 @@
+Come avviene la ricorsione? 
+Devono essere generati tutti i possibili sottoinsieme di un insieme dato
+(non interessa l'ordine -> Set)
+
+INPUT: 
+- insieme di Esame (partenza)
+-numero di crediti (m)
+
+OUTPUT: 
+- insieme di Esame come sottoinsieme di partenza, tale per cui 
+                                                 * somma Esame.crediti ==m 
+                                                 *media Esame.voto sia max
+
+Come approcciarsi?
+1. generare i sottoinsiemi di 'partenza' un caso alla volta, decidendo Esame per esame se debba 
+o meno far parte della soluzione (del sottoinsieme). Provo entrambe le cose : metto e non metto
+Il livello indica quale corso sto decidendo di mettere o no.
+
+Ad ogni livello si analizza l'elemento provando a metterlo e non metterlo facendo andare 
+avanti la rcorsione in ogni caso 
+
+            Elemento 1 dell'insieme (livello 0)
+            -inserisco -> parziale {e1}
+              Elemento 2 dell'insieme (livello 1)
+              -inserisco -> parziale {e1, e2}
+              -non inserisco -> parziale {e1}
+            -non inserisco -> parziale { }
+              Elemento 2 dell'insieme (livello 1)
+              -inserisco -> parziale {e2}
+              -non inserisco -> parziale { }
+
+Quindi, una soluzione parziale == un sottoinsieme composto dagli esami tra 0 e l-1;   
+        
+Per generare un sottoproblema a livello L? Si decide se inserire esami[L] oppure no. 
+Due possibili sottoproblemi : non si aggiunge nulla alla soluzione parziale 
+                              si aggiunge alla soluzione parziale l'esami[L]
+                              
+ Quali sono i casi terminali? 
+ ( qui conviene prima controllare il numero di crediti, se >m return; altrimenti
+ si controlla la media : se essa e' migliore delle altre viste fino a quel punto si tiene
+ traccia della soluzione parziale altrimenti adios. Alla fine si avra' un'unica soluzione 
+ parziale che sara' la migliore). 
+ *L= MAX ovvero non ci sono piu' corsi da aggiungere 
+         se parziale.sommaCrediti()== m -> potrebbe essere una soluzione valida allora calcolaMedia()
+                                                                                       se parziale.media()> media di tutte le soluzioni viste finora
+                                                                                       allora ne tengo traccia. 
+                                                                                       se parziale.media() < media di una delle altre, l'abbandono
+         se parziale.sommaCrediti() !=m -> non rispetta il vincolo, abbandono la soluzione
+Questo caso mi fa esplorare tutto quindi e' dispendioso prima di scartare.
+
+*se parziale.sommacrediti() > m -> inutile andare avanti, mi fermo subito
+
+* se parziale.sommaCrediti() == m -> fermo ricorsione e calcolaMedia(), la confronto con le altre: 
+                                     se migliore la tengo da parte 
+                                     se peggiore la scarto. 
+                                     
+                                     
+                               
+2. (meno furbo) Ad ogni livello si aggiunge un corso, ma quale? Si provano tutti. 
+Così ad ogni livello L la soluzione parziale sara' un sottoinsieme di esattamente L esami. 
+Per generare un sottoproblema? Si aggiunge un nuovo esame alla soluzione parziale. Per tutti 
+i casi possibili ( tutti gli esami non ancora compresi nella soluzione parziale) : 
+sottoproblema= parziale + Esame[i]; 
+
+Al primo livello di ricorsione, si hanno N scelte possibili ( N= dimensione di 'partenza')
+      Si provano tutte le N scelte. 
+Ma ne va delle performance poiche' : 
+al livello 0, si ahnno N sottoproblemi. Supponiamo che 'partenza'={ e1, e2, e3}
+                                    L=0    sottoproblema  1) parziale= {e1}
+                                           L=1 parziale = {e1, e2} 
+                                               parziale = {e1, e3}
+                                    L=0 sottoproblema 2) parziale= {e2}
+                                           L=1 parziale ={e2, e1}  -> ma questo in realta' gia ce l'ho solo in ordine diverso ma a me non interessa l'ordine
+                                           L=1 parziale ={e2, e3}           
+                                      L=0 sottoproblema 3) parziale= {e3}    
+                                      
+I casi terminali sono gli stessi dell'approccio numero 1.                                            
